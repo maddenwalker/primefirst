@@ -143,13 +143,13 @@ const cartTest = function() {
                 });
             }
 
-            await page.click('#two-hour-window > .a-section:nth-child(1) > .a-row > .a-column > .a-section > .a-declarative > .a-radio > label');
+            await page.click('#two-hour-window > .a-section:nth-child(1)');
   
-            await page.waitForSelector('.pn-panel-footer > .a-declarative > #delivery-slot-panel-continue-button-bottom > .a-button-inner > .a-button-input');
-            await page.click('.pn-panel-footer > .a-declarative > #delivery-slot-panel-continue-button-bottom > .a-button-inner > .a-button-input');
+            const confirmButton = await page.$('.a-button-input');
+            await confirmButton.click();
   
-            await page.waitForSelector('.a-row > .a-declarative > #houdini-checkout-place-order-button > .a-button-inner > .a-button-input');
-            await page.click('.a-row > .a-declarative > #houdini-checkout-place-order-button > .a-button-inner > .a-button-input');
+            const placeOrderButton = await page.waitForSelector('.a-button-input');
+            await placeOrderButton.click();
 
             log('Order placed!');
 
