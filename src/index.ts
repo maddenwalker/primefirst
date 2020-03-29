@@ -2,7 +2,6 @@ import * as dotEnv from 'dotenv';
 import * as puppeteer from 'puppeteer';
 import * as dayjs from 'dayjs';
 import * as nodemailer from 'nodemailer';
-import * as fs from 'fs';
 
 dotEnv.config();
 
@@ -57,17 +56,6 @@ const sendEmail = (MESSAGE) => {
         log(error);
     }
     
-}
-
-const writeContent = (FILE_NAME, CONTENT) => {
-    try {
-        fs.writeFile(FILE_NAME, CONTENT, (err) => {
-            if ( err ) throw err;
-            log('Content saved to ' + FILE_NAME);
-        });
-    } catch (error) {
-        log(error);
-    }
 }
 
 const authenticate = function() {
@@ -148,17 +136,14 @@ const cartTest = function() {
              
             log('delivery options available');
 
-            // const radioButton = await page.$('#two-hour-window > .a-section:nth-child(1) > input[type="radio"]');
-            // await radioButton.click();
+            await deliveryOption.click();
   
-            // const confirmButton = await page.$('.a-button-input');
-            // await confirmButton.click();
+            const confirmButton = await page.$('.a-button-input');
+            await confirmButton.click();
   
-            // const placeOrderButton = await page.$('.a-button-input');
-            // await placeOrderButton.click();
+            const placeOrderButton = await page.$('.a-button-input');
+            await placeOrderButton.click();
 
-            const pageHTML = await page.content()
-            writeContent( 'theCheckoutPage.html', pageHTML );
             log('alerting you via email . . .');
             sendEmail(FOUND_MESSAGE);
 
