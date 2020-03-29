@@ -26,7 +26,7 @@ const FOUND_MESSAGE = {
     from: process.env.NODEMAILER_FROM_ADDRESS,
     to: process.env.NODEMAILER_TO_ADDRESS,
     subject: 'PRIME FIRST: DELIVERY TIME FOUND',
-    text: 'https://primenow.amazon.com/cart' 
+    text: 'shortcuts://run-shortcut?name=Open%20Prime%20Now' 
 };
 
 const log = (message) => {
