@@ -49,7 +49,7 @@ const authenticate = function() {
 
 const cartTest = function() {
     return this.getPage(BASE_URL + '/cart', async page => {
-        log('\n=======> checking for times')
+        log('=======> checking for times <=======')
         await page.waitForSelector('.cart-checkout-button');
 
         const checkoutButton = await page.$('.cart-checkout-button a');
@@ -74,6 +74,8 @@ const cartTest = function() {
         if (deliveryOption) {
             Player.play('alert.mp3');
             log('delivery options available');
+            const pageContent = page.content();
+            log(pageContent)
         } else {
             log('unavailable');
         }
