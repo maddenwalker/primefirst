@@ -133,6 +133,16 @@ const cartTest = function() {
              
             log('delivery options available');
 
+            async () => {
+                TRANSPORT.sendMail(FOUND_MESSAGE, function(err, info) {
+                    if (err) {
+                      log(err)
+                    } else {
+                      log(info);
+                    }
+                });
+            }
+
             await page.click('#two-hour-window > .a-section:nth-child(1) > .a-row > .a-column > .a-section > .a-declarative > .a-radio > label');
   
             await page.waitForSelector('.pn-panel-footer > .a-declarative > #delivery-slot-panel-continue-button-bottom > .a-button-inner > .a-button-input');
@@ -140,14 +150,6 @@ const cartTest = function() {
   
             await page.waitForSelector('.a-row > .a-declarative > #houdini-checkout-place-order-button > .a-button-inner > .a-button-input');
             await page.click('.a-row > .a-declarative > #houdini-checkout-place-order-button > .a-button-inner > .a-button-input');
-
-            TRANSPORT.sendMail(FOUND_MESSAGE, function(err, info) {
-                if (err) {
-                  log(err)
-                } else {
-                  log(info);
-                }
-            });
 
             log('Order placed!');
 
