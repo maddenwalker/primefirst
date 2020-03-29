@@ -138,7 +138,7 @@ const cartTest = function() {
             const confirmButton = await page.$('.a-button-input');
             await confirmButton.click();
   
-            const placeOrderButton = await page.waitForSelector('.a-button-input');
+            const placeOrderButton = await page.$('.a-button-input');
             await placeOrderButton.click();
 
             log('Order placed!');
