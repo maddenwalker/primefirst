@@ -43,6 +43,21 @@ const verifyEmail = function() {
       });
 }
 
+const sendEmail = (MESSAGE) => {
+    try {
+        TRANSPORT.sendMail(MESSAGE, function(err, info) {
+            if (err) {
+                log(err)
+            } else {
+                log(info);
+            }
+        });
+    } catch (error) {
+        log(error);
+    }
+    
+}
+
 const authenticate = function() {
     return this.getPage(BASE_URL, async page => {
         await page.waitForSelector('input[name="lsPostalCode"]');
@@ -74,19 +89,7 @@ const authenticate = function() {
         await page.waitFor(4000);
 
         log('auth done');
-
-        try {
-            TRANSPORT.sendMail(START_MESSAGE, function(err, info) {
-                if (err) {
-                  log(err)
-                } else {
-                  log(info);
-                }
-            });
-        } catch (error) {
-            log(error)
-        }
-       
+        sendEmail(START_MESSAGE);
     });
 };
 
@@ -133,16 +136,17 @@ const cartTest = function() {
              
             log('delivery options available');
 
-            TRANSPORT.sendMail(FOUND_MESSAGE, function(err, info) {
-                if (err) {
-                  log(err)
-                } else {
-                  log(info);
-                }
-            });
+            await deliveryOption.click();
+  
+            const confirmButton = await page.$('.a-button-input');
+            await confirmButton.click();
+  
+            const placeOrderButton = await page.$('.a-button-input');
+            await placeOrderButton.click();
 
-            const pageContent = page.content();
-            log(pageContent)
+            log('alerting you via email . . .');
+            sendEmail(FOUND_MESSAGE);
+
         } else {
             log('unavailable');
         }
