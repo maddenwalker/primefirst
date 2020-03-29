@@ -1,17 +1,47 @@
 import * as dotEnv from 'dotenv';
 import * as puppeteer from 'puppeteer';
-import * as player from 'play-sound';
 import * as dayjs from 'dayjs';
+import * as nodemailer from 'nodemailer';
 
 dotEnv.config();
-const Player = player();
 
 const BASE_URL = process.env.BASE_URL || 'https://primenow.amazon.com';
 const POSTAL_CODE = process.env.POSTAL_CODE || '94507';
+const TRANSPORT = nodemailer.createTransport({
+    host: process.env.NODEMAILER_HOST,
+    port: process.env.NODEMAILER_PORT,
+    secure: true,
+    auth: {
+       user: process.env.NODEMAILER_USERNAME,
+       pass: process.env.NODEMAILER_PASSWORD
+    }
+});
+const START_MESSAGE = {
+    from: process.env.NODEMAILER_FROM_ADDRESS,
+    to: process.env.NODEMAILER_TO_ADDRESS,
+    subject: 'PRIME FIRST: Starting to look for times ',
+    text: 'Polling begins now . . .' 
+};
+const FOUND_MESSAGE = {
+    from: process.env.NODEMAILER_FROM_ADDRESS,
+    to: process.env.NODEMAILER_TO_ADDRESS,
+    subject: 'PRIME FIRST: DELIVERY TIME FOUND',
+    text: 'https://primenow.amazon.com/cart' 
+};
 
 const log = (message) => {
     console.log(dayjs().format('YYYY-MM-DD HH:mm:ss'), message);
 };
+
+const verifyEmail = function() {
+    TRANSPORT.verify(function(error, _success) {
+        if (error) {
+          log(error);
+        } else {
+          log("Server is ready to take our messages");
+        }
+      });
+}
 
 const authenticate = function() {
     return this.getPage(BASE_URL, async page => {
@@ -44,13 +74,41 @@ const authenticate = function() {
         await page.waitFor(4000);
 
         log('auth done');
+
+        try {
+            TRANSPORT.sendMail(START_MESSAGE, function(err, info) {
+                if (err) {
+                  log(err)
+                } else {
+                  log(info);
+                }
+            });
+        } catch (error) {
+            log(error)
+        }
+       
     });
 };
 
 const cartTest = function() {
     return this.getPage(BASE_URL + '/cart', async page => {
         log('=======> checking for times <=======')
-        await page.waitForSelector('.cart-checkout-button');
+
+        const confirmAddress = await page.$('input[name="offer-swapping-token"]');
+        if (confirmAddress) {
+
+            const nextButton = await page.$('.a-button-input');
+            await nextButton.click();
+
+            await page.waitFor(6000);
+        }
+
+        try {
+            await page.waitForSelector('.cart-checkout-button');    
+        } catch (error) {
+            log(error)
+        }
+        
 
         const checkoutButton = await page.$('.cart-checkout-button a');
         await checkoutButton.click();
@@ -72,8 +130,17 @@ const cartTest = function() {
         const deliveryOption = await page.$('input[name="delivery-window-radio"]');
 
         if (deliveryOption) {
-            Player.play('alert.mp3');
+             
             log('delivery options available');
+
+            TRANSPORT.sendMail(FOUND_MESSAGE, function(err, info) {
+                if (err) {
+                  log(err)
+                } else {
+                  log(info);
+                }
+            });
+
             const pageContent = page.content();
             log(pageContent)
         } else {
@@ -133,10 +200,10 @@ const createBrowser = async () => {
 
 (async () => {
     log('init');
-    Player.play('alert.mp3');
+    verifyEmail();
     const browser = await createBrowser();
     await browser.authenticate();
     setInterval(() => {
         browser.cartTest();
-    }, 60000);
+    }, 30000);
 })();

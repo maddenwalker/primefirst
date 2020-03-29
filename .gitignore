@@ -60,6 +60,9 @@ typings/
 # dotenv environment variables file
 .env
 
+# json lock files
+*-lock.json
+
 .next
 
 build/
