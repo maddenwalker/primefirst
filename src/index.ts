@@ -138,5 +138,5 @@ const createBrowser = async () => {
     await browser.authenticate();
     setInterval(() => {
         browser.cartTest();
-    }, 30000);
+    }, 60000);
 })();
