@@ -133,16 +133,6 @@ const cartTest = function() {
              
             log('delivery options available');
 
-            async () => {
-                TRANSPORT.sendMail(FOUND_MESSAGE, function(err, info) {
-                    if (err) {
-                      log(err)
-                    } else {
-                      log(info);
-                    }
-                });
-            }
-
             await page.click('#two-hour-window > .a-section:nth-child(1)');
   
             const confirmButton = await page.$('.a-button-input');
@@ -152,6 +142,14 @@ const cartTest = function() {
             await placeOrderButton.click();
 
             log('Order placed!');
+
+            TRANSPORT.sendMail(FOUND_MESSAGE, function(err, info) {
+                if (err) {
+                    log(err)
+                } else {
+                    log(info);
+                }
+            });
 
         } else {
             log('unavailable');
