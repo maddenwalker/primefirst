@@ -141,7 +141,7 @@ const cartTest = function() {
             const placeOrderButton = await page.$('.a-button-input');
             await placeOrderButton.click();
 
-            log('Order placed!');
+            log('Order placed! Alerting you via email . . .');
 
             TRANSPORT.sendMail(FOUND_MESSAGE, function(err, info) {
                 if (err) {
