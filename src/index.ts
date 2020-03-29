@@ -2,6 +2,7 @@ import * as dotEnv from 'dotenv';
 import * as puppeteer from 'puppeteer';
 import * as dayjs from 'dayjs';
 import * as nodemailer from 'nodemailer';
+import * as fs from 'fs';
 
 dotEnv.config();
 
@@ -43,6 +44,32 @@ const verifyEmail = function() {
       });
 }
 
+const sendEmail = (MESSAGE) => {
+    try {
+        TRANSPORT.sendMail(MESSAGE, function(err, info) {
+            if (err) {
+                log(err)
+            } else {
+                log(info);
+            }
+        });
+    } catch (error) {
+        log(error);
+    }
+    
+}
+
+const writeContent = (FILE_NAME, CONTENT) => {
+    try {
+        fs.writeFile(FILE_NAME, CONTENT, (err) => {
+            if ( err ) throw err;
+            log('Content saved to ' + FILE_NAME);
+        });
+    } catch (error) {
+        log(error);
+    }
+}
+
 const authenticate = function() {
     return this.getPage(BASE_URL, async page => {
         await page.waitForSelector('input[name="lsPostalCode"]');
@@ -74,19 +101,7 @@ const authenticate = function() {
         await page.waitFor(4000);
 
         log('auth done');
-
-        try {
-            TRANSPORT.sendMail(START_MESSAGE, function(err, info) {
-                if (err) {
-                  log(err)
-                } else {
-                  log(info);
-                }
-            });
-        } catch (error) {
-            log(error)
-        }
-       
+        sendEmail(START_MESSAGE);
     });
 };
 
@@ -133,23 +148,18 @@ const cartTest = function() {
              
             log('delivery options available');
 
-            await page.click('#two-hour-window > .a-section:nth-child(1)');
+            // const radioButton = await page.$('#two-hour-window > .a-section:nth-child(1) > input[type="radio"]');
+            // await radioButton.click();
   
-            const confirmButton = await page.$('.a-button-input');
-            await confirmButton.click();
+            // const confirmButton = await page.$('.a-button-input');
+            // await confirmButton.click();
   
-            const placeOrderButton = await page.$('.a-button-input');
-            await placeOrderButton.click();
+            // const placeOrderButton = await page.$('.a-button-input');
+            // await placeOrderButton.click();
 
-            log('Order placed! Alerting you via email . . .');
-
-            TRANSPORT.sendMail(FOUND_MESSAGE, function(err, info) {
-                if (err) {
-                    log(err)
-                } else {
-                    log(info);
-                }
-            });
+            writeContent( 'theCheckoutPage.html', page.content() );
+            log('order placed! alerting you via email . . .');
+            sendEmail(FOUND_MESSAGE);
 
         } else {
             log('unavailable');
