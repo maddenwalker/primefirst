@@ -157,8 +157,9 @@ const cartTest = function() {
             // const placeOrderButton = await page.$('.a-button-input');
             // await placeOrderButton.click();
 
-            writeContent( 'theCheckoutPage.html', page.content() );
-            log('order placed! alerting you via email . . .');
+            const pageHTML = await page.content()
+            writeContent( 'theCheckoutPage.html', pageHTML );
+            log('alerting you via email . . .');
             sendEmail(FOUND_MESSAGE);
 
         } else {
