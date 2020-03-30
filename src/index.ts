@@ -136,7 +136,7 @@ const cartTest = function() {
              
             log('delivery options available');
             
-            if (process.env.ATTEMPT_ORDER) {
+            if (process.env.ATTEMPT_ORDER == 'true') {
                 await deliveryOption.click();
   
                 const confirmButton = await page.$('.a-button-input');
@@ -148,7 +148,7 @@ const cartTest = function() {
                 log('Order should have been placed');
             }
             
-            if (process.env.ALERT_VIA_EMAIL) {
+            if (process.env.ALERT_VIA_EMAIL == 'true') {
                 log('alerting you via email . . .');
                 sendEmail(FOUND_MESSAGE);
             }
