@@ -20,13 +20,13 @@ const START_MESSAGE = {
     from: process.env.NODEMAILER_FROM_ADDRESS,
     to: process.env.NODEMAILER_TO_ADDRESS_NORMAL,
     subject: 'PRIME FIRST: Starting to look for times ',
-    text: 'Polling begins now . . .' 
+    text: 'Polling begins now . . . make sure your cart is up to date at https://primenow.amazon.com/cart' 
 };
 const FOUND_MESSAGE = {
     from: process.env.NODEMAILER_FROM_ADDRESS,
     to: process.env.NODEMAILER_TO_ADDRESS_HIGH,
     subject: 'PRIME FIRST: DELIVERY TIME FOUND',
-    text: 'shortcuts://run-shortcut?name=Open%20Prime%20Now' 
+    text: 'tap shortcuts://run-shortcut?name=Open%20Prime%20Now or visit https://primenow.amazon.com/cart to checkout' 
 };
 
 const log = (message) => {
