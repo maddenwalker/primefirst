@@ -110,6 +110,7 @@ const cartTest = function() {
             await page.waitForSelector('.cart-checkout-button');    
         } catch (error) {
             log(error)
+            await page.screenshot({ path: './error.jpg', type: 'jpeg' });
         }
         
 
