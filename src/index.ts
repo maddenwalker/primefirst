@@ -140,12 +140,18 @@ const cartTest = function() {
                 log('ordering . . .');
                 
                 await deliveryOption.click();
+                
+                await page.screenshot({ path: './delivery_button_clicked.jpg', type: 'jpeg' });
   
                 const confirmButton = await page.$('.a-button-input');
                 await confirmButton.click();
+                
+                await page.screenshot({ path: './confirm_1_button_clicked.jpg', type: 'jpeg' });
   
                 const placeOrderButton = await page.$('.a-button-input');
                 await placeOrderButton.click();
+                
+                await page.screenshot({ path: './confirm_2_button_clicked.jpg', type: 'jpeg' });
             
                 log('order placed');
             }
