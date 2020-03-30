@@ -135,17 +135,23 @@ const cartTest = function() {
         if (deliveryOption) {
              
             log('delivery options available');
-
-            await deliveryOption.click();
+            
+            if (process.env.ATTEMPT_ORDER) {
+                await deliveryOption.click();
   
-            const confirmButton = await page.$('.a-button-input');
-            await confirmButton.click();
+                const confirmButton = await page.$('.a-button-input');
+                await confirmButton.click();
   
-            const placeOrderButton = await page.$('.a-button-input');
-            await placeOrderButton.click();
-
-            log('alerting you via email . . .');
-            sendEmail(FOUND_MESSAGE);
+                const placeOrderButton = await page.$('.a-button-input');
+                await placeOrderButton.click();
+            
+                log('Order should have been placed');
+            }
+            
+            if (process.env.ALERT_VIA_EMAIL) {
+                log('alerting you via email . . .');
+                sendEmail(FOUND_MESSAGE);
+            }
 
         } else {
             log('unavailable');
