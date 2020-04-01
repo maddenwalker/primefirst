@@ -144,12 +144,12 @@ const cartTest = function() {
                 
                 await page.screenshot({ path: './delivery_button_clicked.jpg', type: 'jpeg' });
   
-                const confirmButton = await page.$('.a-button-input');
+                const confirmButton = await page.$('#delivery-slot-panel-continue-button-bottom > .a-button-inner > .a-button-input');
                 await confirmButton.click();
                 
                 await page.screenshot({ path: './confirm_1_button_clicked.jpg', type: 'jpeg' });
   
-                const placeOrderButton = await page.$('.a-button-input');
+                const placeOrderButton = await page.$('#houdini-checkout-place-order-button > .a-button-inner > .a-button-input');
                 await placeOrderButton.click();
                 
                 await page.screenshot({ path: './confirm_2_button_clicked.jpg', type: 'jpeg' });
