@@ -16,17 +16,26 @@ const TRANSPORT = nodemailer.createTransport({
        pass: process.env.NODEMAILER_PASSWORD
     }
 });
+
 const START_MESSAGE = {
     from: process.env.NODEMAILER_FROM_ADDRESS,
     to: process.env.NODEMAILER_TO_ADDRESS_NORMAL,
     subject: 'PRIME FIRST: Starting to look for times ',
     text: 'Polling begins now . . . make sure your cart is up to date at https://primenow.amazon.com/cart' 
 };
+
 const FOUND_MESSAGE = {
     from: process.env.NODEMAILER_FROM_ADDRESS,
     to: process.env.NODEMAILER_TO_ADDRESS_HIGH,
     subject: 'PRIME FIRST: DELIVERY TIME FOUND',
     text: 'tap shortcuts://run-shortcut?name=Open%20Prime%20Now or visit https://primenow.amazon.com/cart to checkout' 
+};
+
+const ERROR_MESSAGE = {
+    from: process.env.NODEMAILER_FROM_ADDRESS,
+    to: process.env.NODEMAILER_SERVER_ADMIN_EMAIL,
+    subject: 'PRIME FIRST: ERROR ',
+    text: 'Prime First encountered an error'
 };
 
 const log = (message) => {
@@ -54,6 +63,7 @@ const sendEmail = (MESSAGE) => {
         });
     } catch (error) {
         log(error);
+        sendMail(ERROR_MESSAGE);
     }
     
 }
@@ -111,12 +121,18 @@ const cartTest = function() {
         } catch (error) {
             log(error)
             await page.screenshot({ path: './error.jpg', type: 'jpeg' });
+            sendMail(ERROR_MESSAGE);
         }
         
-
-        const checkoutButton = await page.$('.cart-checkout-button a');
-        await checkoutButton.click();
-
+        try {
+            const checkoutButton = await page.$('.cart-checkout-button a');
+            await checkoutButton.click();
+        } catch (error) {
+            log(error)
+            await page.screenshot({ path: './error.jpg', type: 'jpeg' });
+            sendMail(ERROR_MESSAGE);
+        }
+        
         await page.waitFor(8000);
 
         const addressInput = await page.$('input[name="addressRadioButton"]');
