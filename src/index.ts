@@ -155,25 +155,25 @@ const cartTest = function() {
             
             if (process.env.ATTEMPT_ORDER == 'true') {
                 try {
-                log('ordering . . .');
+                    log('ordering . . .');
+                    
+                    await deliveryOption.click();
+                    
+                    await page.screenshot({ path: './delivery_button_clicked.jpg', type: 'jpeg' });
+    
+                    const confirmButton = await page.$('.a-button-input');
+                    await confirmButton.click();
+                    
+                    await page.screenshot({ path: './confirm_1_button_clicked.jpg', type: 'jpeg' });
+                    
+                    await page.waitFor(10000);
+    
+                    const placeOrderButton = await page.$('.a-button-input');
+                    await placeOrderButton.click();
+                    
+                    await page.screenshot({ path: './confirm_2_button_clicked.jpg', type: 'jpeg' });
                 
-                await deliveryOption.click();
-                
-                await page.screenshot({ path: './delivery_button_clicked.jpg', type: 'jpeg' });
-  
-                const confirmButton = await page.$('.a-button-input');
-                await confirmButton.click();
-                
-                await page.screenshot({ path: './confirm_1_button_clicked.jpg', type: 'jpeg' });
-                
-                await page.waitFor(6000);
-  
-                const placeOrderButton = await page.$('.a-button-input');
-                await placeOrderButton.click();
-                
-                await page.screenshot({ path: './confirm_2_button_clicked.jpg', type: 'jpeg' });
-            
-                log('order placed');
+                    log('order placed');
                 } catch (error) {
                     log(error);
                     sendEmail(ERROR_MESSAGE);
