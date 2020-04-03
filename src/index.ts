@@ -146,7 +146,7 @@ const cartTest = function() {
 
             await page.waitFor(6000);
         }
-
+        
         const deliveryOption = await page.$('input[name="delivery-window-radio"]');
 
         if (deliveryOption) {
@@ -154,23 +154,30 @@ const cartTest = function() {
             log('delivery options available');
             
             if (process.env.ATTEMPT_ORDER == 'true') {
+                try {
                 log('ordering . . .');
                 
                 await deliveryOption.click();
                 
                 await page.screenshot({ path: './delivery_button_clicked.jpg', type: 'jpeg' });
   
-                const confirmButton = await page.$('#delivery-slot-panel-continue-button-bottom > .a-button-inner > .a-button-input');
+                const confirmButton = await page.$('.a-button-input');
                 await confirmButton.click();
                 
                 await page.screenshot({ path: './confirm_1_button_clicked.jpg', type: 'jpeg' });
+                
+                await page.waitFor(6000);
   
-                const placeOrderButton = await page.$('#houdini-checkout-place-order-button > .a-button-inner > .a-button-input');
+                const placeOrderButton = await page.$('.a-button-input');
                 await placeOrderButton.click();
                 
                 await page.screenshot({ path: './confirm_2_button_clicked.jpg', type: 'jpeg' });
             
                 log('order placed');
+                } catch (error) {
+                    log(error);
+                    sendEmail(ERROR_MESSAGE);
+                };
             }
             
             if (process.env.ALERT_VIA_EMAIL == 'true') {
