@@ -63,7 +63,7 @@ const sendEmail = (MESSAGE) => {
         });
     } catch (error) {
         log(error);
-        sendMail(ERROR_MESSAGE);
+        sendEmail(ERROR_MESSAGE);
     }
     
 }
@@ -121,7 +121,7 @@ const cartTest = function() {
         } catch (error) {
             log(error)
             await page.screenshot({ path: './error.jpg', type: 'jpeg' });
-            sendMail(ERROR_MESSAGE);
+            sendEmail(ERROR_MESSAGE);
         }
         
         try {
@@ -130,7 +130,7 @@ const cartTest = function() {
         } catch (error) {
             log(error)
             await page.screenshot({ path: './error.jpg', type: 'jpeg' });
-            sendMail(ERROR_MESSAGE);
+            sendEmail(ERROR_MESSAGE);
         }
         
         await page.waitFor(8000);
