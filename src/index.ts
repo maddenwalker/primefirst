@@ -185,7 +185,7 @@ const cartTest = function() {
                     
                     await page.waitFor(6000);
 
-                    const placeOrderButton =   await page.$('.a-row > .a-declarative > #houdini-checkout-place-order-button > .a-button-inner > .a-button-input')
+                    const placeOrderButton =   await page.waitForSelector('.a-row > .a-declarative > #houdini-checkout-place-order-button > .a-button-inner > .a-button-input')
                     await placeOrderButton.click();
                     
                     await page.screenshot({ path: './confirm_2_button_clicked.jpg', type: 'jpeg' });
