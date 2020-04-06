@@ -68,6 +68,17 @@ const sendEmail = (MESSAGE) => {
     
 }
 
+const writeContent = (FILE_NAME, CONTENT) => {
+    try {
+        fs.writeFile(FILE_NAME, CONTENT, (err) => {
+            if ( err ) throw err;
+            log('Content saved to ' + FILE_NAME);
+        });
+    } catch (error) {
+        log(error);
+    }
+}
+
 const authenticate = function() {
     return this.getPage(BASE_URL, async page => {
         await page.waitForSelector('input[name="lsPostalCode"]');
@@ -152,7 +163,12 @@ const cartTest = function() {
         if (deliveryOption) {
              
             log('delivery options available');
-            
+
+            if (process.env.ALERT_VIA_EMAIL == 'true') {
+                log('alerting you via email . . .');
+                sendEmail(FOUND_MESSAGE);
+            }
+
             if (process.env.ATTEMPT_ORDER == 'true') {
                 try {
                     log('ordering . . .');
@@ -166,25 +182,21 @@ const cartTest = function() {
                     
                     await page.screenshot({ path: './confirm_1_button_clicked.jpg', type: 'jpeg' });
                     
-                    await page.waitFor(10000);
+                    await page.waitFor(6000);
                     
-                    await page.screenshot({ path: './confirm_1_button_wait.jpg', type: 'jpeg' });
-    
-                    const placeOrderButton = await page.$('.a-button-input');
-                    await placeOrderButton.click();
+                    const pageHTML = await page.content();
+                    writeContent( 'theCheckoutPage.html', pageHTML );
+
+                    // const placeOrderButton = await page.$('#houdini-checkout-place-order-button > .a-button-inner > .a-button-input');
+                    // await placeOrderButton.click();
                     
-                    await page.screenshot({ path: './confirm_2_button_clicked.jpg', type: 'jpeg' });
+                    // await page.screenshot({ path: './confirm_2_button_clicked.jpg', type: 'jpeg' });
                 
-                    log('order placed');
+                    // log('order placed');
                 } catch (error) {
                     log(error);
                     sendEmail(ERROR_MESSAGE);
                 };
-            }
-            
-            if (process.env.ALERT_VIA_EMAIL == 'true') {
-                log('alerting you via email . . .');
-                sendEmail(FOUND_MESSAGE);
             }
 
         } else {
