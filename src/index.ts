@@ -184,16 +184,13 @@ const cartTest = function() {
                     await page.screenshot({ path: './confirm_1_button_clicked.jpg', type: 'jpeg' });
                     
                     await page.waitFor(6000);
-                    
-                    const pageHTML = await page.content();
-                    writeContent( 'theCheckoutPage.html', pageHTML );
 
-                    // const placeOrderButton = await page.$('#houdini-checkout-place-order-button > .a-button-inner > .a-button-input');
-                    // await placeOrderButton.click();
+                    const placeOrderButton =   await page.$('.a-row > .a-declarative > #houdini-checkout-place-order-button > .a-button-inner > .a-button-input')
+                    await placeOrderButton.click();
                     
-                    // await page.screenshot({ path: './confirm_2_button_clicked.jpg', type: 'jpeg' });
+                    await page.screenshot({ path: './confirm_2_button_clicked.jpg', type: 'jpeg' });
                 
-                    // log('order placed');
+                    log('order placed');
                 } catch (error) {
                     log(error);
                     sendEmail(ERROR_MESSAGE);
