@@ -167,6 +167,8 @@ const cartTest = function() {
                     await page.screenshot({ path: './confirm_1_button_clicked.jpg', type: 'jpeg' });
                     
                     await page.waitFor(10000);
+                    
+                    await page.screenshot({ path: './confirm_1_button_wait.jpg', type: 'jpeg' });
     
                     const placeOrderButton = await page.$('.a-button-input');
                     await placeOrderButton.click();
