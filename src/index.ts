@@ -2,6 +2,7 @@ import * as dotEnv from 'dotenv';
 import * as puppeteer from 'puppeteer';
 import * as dayjs from 'dayjs';
 import * as nodemailer from 'nodemailer';
+import * as fs from 'fs';
 
 dotEnv.config();
 
