@@ -190,7 +190,7 @@ const cartTest = function() {
                     
                     await page.screenshot({ path: './confirm_2_button_clicked.jpg', type: 'jpeg' });
 
-                    await page.waitFor(6000);
+                    await page.waitFor(10000);
 
                     await page.screenshot({ path: './order_placed.jpg', type: 'jpeg' });
                 
