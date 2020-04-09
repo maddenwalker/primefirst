@@ -124,6 +124,11 @@ const authenticate = function() {
 
 const cartTest = function() {
     return this.getPage(BASE_URL + '/cart', async page => {
+        if ( !page.url().includes('cart') ) {
+            await page.screenshot({ path: './error_cart_path.jpg', type: 'jpeg' });
+            sendEmail(ERROR_MESSAGE);
+        }
+
         log('=======> checking for times <=======')
 
         const confirmAddress = await page.$('input[name="offer-swapping-token"]');
