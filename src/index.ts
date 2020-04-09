@@ -32,6 +32,13 @@ const FOUND_MESSAGE = {
     text: 'tap shortcuts://run-shortcut?name=Open%20Prime%20Now or visit https://primenow.amazon.com/cart to checkout' 
 };
 
+const ORDER_PLACED_MESSAGE = {
+    from: process.env.NODEMAILER_FROM_ADDRESS,
+    to: process.env.NODEMAILER_TO_ADDRESS_NORMAL,
+    subject: 'PRIME FIRST: ORDER PLACED',
+    text: 'tap shortcuts://run-shortcut?name=Open%20Prime%20Now or visit https://primenow.amazon.com/cart to see delivery time' 
+};
+
 const ERROR_MESSAGE = {
     from: process.env.NODEMAILER_FROM_ADDRESS,
     to: process.env.NODEMAILER_SERVER_ADMIN_EMAIL,
@@ -175,25 +182,20 @@ const cartTest = function() {
                     log('ordering . . .');
                     
                     await deliveryOption.click();
-                    
-                    await page.screenshot({ path: './delivery_button_clicked.jpg', type: 'jpeg' });
     
                     const confirmButton = await page.$('.a-button-input');
                     await confirmButton.click();
-                    
-                    await page.screenshot({ path: './confirm_1_button_clicked.jpg', type: 'jpeg' });
                     
                     await page.waitFor(6000);
 
                     const placeOrderButton = await page.waitForSelector('#houdini-checkout-place-order-button > .a-button-inner > .a-button-input')
                     await placeOrderButton.click();
-                    
-                    await page.screenshot({ path: './confirm_2_button_clicked.jpg', type: 'jpeg' });
 
                     await page.waitFor(10000);
 
                     await page.screenshot({ path: './order_placed.jpg', type: 'jpeg' });
-                
+                    
+                    sendEmail(ORDER_PLACED_MESSAGE);
                     log('order placed');
                 } catch (error) {
                     log(error);
