@@ -51,7 +51,8 @@ const log = (message) => {
 };
 
 const logError = (message, page=null, theLocation=null) => {
-    console.log(dayjs().format('YYYY-MM-DD HH:mm:ss'), message);
+    console.log('<========= ERROR =============>');
+    console.error(dayjs().format('YYYY-MM-DD HH:mm:ss'), message);
     if( page && theLocation ) {
         async page => {
             await page.screenshot({ path: './error' + theLocation + '.jpg', type: 'jpeg' });
