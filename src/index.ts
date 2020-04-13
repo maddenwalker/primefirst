@@ -67,6 +67,7 @@ const verifyEmail = function() {
     TRANSPORT.verify(function(error, _success) {
         if (error) {
           logError(error);
+          throw error;
         } else {
           log("Server is ready to take our messages");
         }
@@ -84,6 +85,7 @@ const sendEmail = (MESSAGE) => {
         });
     } catch (error) {
         logError(error);
+        throw error;
     }
     
 }
@@ -117,12 +119,10 @@ const authenticate = function() {
             const notifyButton = await page.waitForSelector('#inviteButton > .a-button-inner > .a-button-input')
             if (notifyButton) {
                 await notifyButton.click();
-
                 await page.waitFor(6000);
             } else {
                 const cartLink = await page.$('[href="/account/address"]');
                 await cartLink.click();
-
                 await page.waitFor(5000);
             }
 
@@ -141,6 +141,8 @@ const authenticate = function() {
             sendEmail(START_MESSAGE);
         } catch (error) {
             logError(error, page, 'auth');
+            //FATAL
+            throw error;
         }
     });
 };
@@ -223,6 +225,8 @@ const cartTest = function() {
                     log('order placed');
                 } catch (error) {
                     logError(error, page, 'order');
+                    //FATAL
+                    throw error;
                 };
             }
 
