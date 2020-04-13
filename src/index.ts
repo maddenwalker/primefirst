@@ -50,10 +50,23 @@ const log = (message) => {
     console.log(dayjs().format('YYYY-MM-DD HH:mm:ss'), message);
 };
 
+const logError = (message, page=null, theLocation=null) => {
+    console.log(dayjs().format('YYYY-MM-DD HH:mm:ss'), message);
+    if( page && theLocation ) {
+        async page => {
+            await page.screenshot({ path: './error' + theLocation + '.jpg', type: 'jpeg' });
+            const pageHTML = await page.content();
+            writeContent( theLocation + '.html', pageHTML );
+        }
+    }
+    if ( message ) ERROR_MESSAGE.text = message;
+    sendEmail(ERROR_MESSAGE);
+};
+
 const verifyEmail = function() {
     TRANSPORT.verify(function(error, _success) {
         if (error) {
-          log(error);
+          logError(error);
         } else {
           log("Server is ready to take our messages");
         }
@@ -70,8 +83,7 @@ const sendEmail = (MESSAGE) => {
             }
         });
     } catch (error) {
-        log(error);
-        sendEmail(ERROR_MESSAGE);
+        logError(error);
     }
     
 }
@@ -83,50 +95,53 @@ const writeContent = (FILE_NAME, CONTENT) => {
             log('Content saved to ' + FILE_NAME);
         });
     } catch (error) {
-        log(error);
+        logError(error);
     }
 }
 
 const authenticate = function() {
     return this.getPage(BASE_URL, async page => {
         await page.waitForSelector('input[name="lsPostalCode"]');
+        try {
+            log('auth beginning');
 
-        log('auth beginning');
+            const codeInput = await page.$('input[name="lsPostalCode"]');
+            await codeInput.type(POSTAL_CODE, { delay: 100 });
 
-        const codeInput = await page.$('input[name="lsPostalCode"]');
-        await codeInput.type(POSTAL_CODE, { delay: 100 });
-
-        const codeSubmit = await page.$('.a-button-input');
-        await codeSubmit.click();
-
-        await page.waitFor(5000);
-
-        //Added new interstitial screen as of April 13, 2020 to sign up for times
-        const notifyButton = await page.waitForSelector('#inviteButton > .a-button-inner > .a-button-input')
-        if (notifyButton) {
-            await notifyButton.click();
-
-            await page.waitFor(6000);
-        } else {
-            const cartLink = await page.$('[href="/account/address"]');
-            await cartLink.click();
+            const codeSubmit = await page.$('.a-button-input');
+            await codeSubmit.click();
 
             await page.waitFor(5000);
+
+            //Added new interstitial screen as of April 13, 2020 to sign up for times
+            const notifyButton = await page.waitForSelector('#inviteButton > .a-button-inner > .a-button-input')
+            if (notifyButton) {
+                await notifyButton.click();
+
+                await page.waitFor(6000);
+            } else {
+                const cartLink = await page.$('[href="/account/address"]');
+                await cartLink.click();
+
+                await page.waitFor(5000);
+            }
+
+            const emailInput = await page.$('input[name="email"]');
+            await emailInput.type(process.env.EMAIL, { delay: 100 });
+
+            const passwordInput = await page.$('input[name="password"]');
+            await passwordInput.type(process.env.PASSWORD, { delay: 100 });
+
+            const signSubmit = await page.$('.a-button-input');
+            await signSubmit.click();
+
+            await page.waitFor(4000);
+
+            log('auth done');
+            sendEmail(START_MESSAGE);
+        } catch (error) {
+            logError(error, page, 'auth');
         }
-
-        const emailInput = await page.$('input[name="email"]');
-        await emailInput.type(process.env.EMAIL, { delay: 100 });
-
-        const passwordInput = await page.$('input[name="password"]');
-        await passwordInput.type(process.env.PASSWORD, { delay: 100 });
-
-        const signSubmit = await page.$('.a-button-input');
-        await signSubmit.click();
-
-        await page.waitFor(4000);
-
-        log('auth done');
-        sendEmail(START_MESSAGE);
     });
 };
 
@@ -151,18 +166,14 @@ const cartTest = function() {
         try {
             await page.waitForSelector('.cart-checkout-button');    
         } catch (error) {
-            log(error)
-            await page.screenshot({ path: './error.jpg', type: 'jpeg' });
-            sendEmail(ERROR_MESSAGE);
+            logError(error, page, 'checkoutButton');
         }
         
         try {
             const checkoutButton = await page.$('.cart-checkout-button a');
             await checkoutButton.click();
         } catch (error) {
-            log(error)
-            await page.screenshot({ path: './error.jpg', type: 'jpeg' });
-            sendEmail(ERROR_MESSAGE);
+            logError(error, page, 'checkout');
         }
         
         await page.waitFor(8000);
@@ -211,8 +222,7 @@ const cartTest = function() {
                     sendEmail(ORDER_PLACED_MESSAGE);
                     log('order placed');
                 } catch (error) {
-                    log(error);
-                    sendEmail(ERROR_MESSAGE);
+                    logError(error, page, 'order');
                 };
             }
 
