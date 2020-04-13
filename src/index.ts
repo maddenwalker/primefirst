@@ -101,10 +101,18 @@ const authenticate = function() {
 
         await page.waitFor(5000);
 
-        const cartLink = await page.$('[href="/account/address"]');
-        await cartLink.click();
+        //Added new interstitial screen as of April 13, 2020 to sign up for times
+        const notifyButton = await page.waitForSelector('#inviteButton > .a-button-inner > .a-button-input')
+        if (notifyButton) {
+            await notifyButton.click();
 
-        await page.waitFor(5000);
+            await page.waitFor(6000);
+        } else {
+            const cartLink = await page.$('[href="/account/address"]');
+            await cartLink.click();
+
+            await page.waitFor(5000);
+        }
 
         const emailInput = await page.$('input[name="email"]');
         await emailInput.type(process.env.EMAIL, { delay: 100 });
